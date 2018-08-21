@@ -1,0 +1,77 @@
+(define (atom? x) (not (or (pair? x) (null? x))))
+
+(define code-string
+	;"(begin (print 9)(- 4 (+ 5 6)))"
+  "(print 4)"
+)
+
+(define (S v)
+  (if (null? v)
+  ""
+  (if (pair? v)
+  (jsize v)
+  (string-append (format "~a" v) )
+  )
+  )
+)
+
+(define (xcar lst)
+  (if (equal? 1 (length lst))
+    (car lst)
+    (xcar (cdr lst))
+  )
+)
+
+(define (xcdr lst)
+  (if (equal? 1 (length lst))
+    '()
+    (cons (car lst) (xcdr (cdr lst))
+  )
+))
+
+(define (AST code)
+	(read 
+		(open-input-string code)))
+
+(define (jsize lst)
+  (case (car lst)
+  ('define (func-def lst))
+  ('not (func-call (cons '! (cdr lst))))
+  ('or (join-op (cdr lst) " || " ) )
+  ('and (join-op (cdr lst) " && " ) )
+  ('+ (join-op (cdr lst) " + " ) )
+  ('- (join-op (cdr lst) " - " ) )
+  (else (func-call lst))
+  )
+)
+
+(define (join-op tree j)
+  (string-join (map S tree) j )
+)
+
+(define (func-def tree)
+  (string-append 
+    "function " 
+    (S (car (car (cdr tree)))) "(" (string-join (map S (xcdr (cdr (cdr tree)))) ", ") ") { " 
+    "return " (jsize (xcar tree)) " ;"
+    " }" )
+)
+
+(define (func-call lst)
+  (print lst)
+  (if (null? lst)
+    ""
+  (string-append (S(car lst)) "(" (string-join (map S (cdr lst)) ", ") ")" )))
+
+
+(define (build tree)
+  (print tree)
+  (print "----------------")
+  (if (or (atom? tree) (null? tree))
+    (S tree)
+    (jsize tree )
+  )
+  ;(string-append res (S (car tree)))
+)
+
+(build (AST "(define (f a b) (+ a b))"))
