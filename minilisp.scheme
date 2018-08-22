@@ -10,17 +10,17 @@
   )
 )
 
-(define (xcar lst)
-  (if (equal? 1 (length lst))
-    (car lst)
-    (xcar (cdr lst))
+(define (xcar tree)
+  (if (equal? 1 (length tree))
+    (car tree)
+    (xcar (cdr tree))
   )
 )
 
-(define (xcdr lst)
-  (if (equal? 1 (length lst))
+(define (xcdr tree)
+  (if (equal? 1 (length tree))
     '()
-    (cons (car lst) (xcdr (cdr lst))
+    (cons (car tree) (xcdr (cdr tree))
   )
 ))
 
@@ -28,18 +28,17 @@
 	(read 
 		(open-input-string code)))
 
-(define (jsize lst)
-  ;(print lst)
-  
-  (print lst)
-  (case (car lst)
-  ('define (func-def lst))
-  ('not (func-call (cons '! (cdr lst))))
-  ('or (brackets (join-op (cdr lst) " || " ) ))
-  ('and (brackets (join-op (cdr lst) " && " ) ))
-  ((+ - * / %) (brackets (func->op lst ) ))
-  ('begin (blocks (cdr lst) ) )
-  (else (func-call lst))
+(define (jsize tree)
+  ;(print tree)
+
+  (case (car tree)
+  ('define (func-def tree))
+  ('not (func-call (cons '! (cdr tree))))
+  ('or (brackets (join-op (cdr tree) " || " ) ))
+  ('and (brackets (join-op (cdr tree) " && " ) ))
+  ((+ - * / %) (brackets (func->op tree ) ))
+  ('begin (blocks (cdr tree) ) )
+  (else (func-call tree))
   )
 )
 
@@ -75,10 +74,10 @@
      )
   )
 
-(define (func-call lst)
-  (if (null? lst)
+(define (func-call tree)
+  (if (null? tree)
     ""
-  (string-append (S(car lst)) "(" (string-join (map S (cdr lst)) ", ") ")" )))
+  (string-append (S(car tree)) "(" (string-join (map S (cdr tree)) ", ") ")" )))
 
 
 (define (build tree)
