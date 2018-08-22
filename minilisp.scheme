@@ -28,9 +28,9 @@
 	(read 
 		(open-input-string code)))
 
-(define (jsize tree)
-  ;(print tree)
 
+
+(define (jsize tree)
   (case (car tree)
   ('define (func-def tree))
   ('not (func-call (cons '! (cdr tree))))
@@ -56,14 +56,14 @@
 (define (blocks tree)
   (if (null? tree)
   ""
-  (string-append (jsize (car tree)) " ; "  (blocks (cdr tree)))))
+  (string-append (jsize (car tree)) ";\n"  (blocks (cdr tree)))))
 
 (define (func-def tree)
   (string-append 
     "function " 
-    (S (car (car (cdr tree)))) "(" (string-join (map S (cdr (car (cdr tree ) ) ) ) ", ") ") { " 
-    (jsize (insert-return (xcar tree))) " ;"
-    " }" )
+    (S (car (car (cdr tree)))) "(" (string-join (map S (cdr (car (cdr tree ) ) ) ) ", ") ") {\n" 
+    (jsize (insert-return (xcar tree)))
+    "}" )
 )
 
 ; If function body 
@@ -88,7 +88,7 @@
   )
 )
 
-(define code "(define (f a b) (begin (print 5) (* (- a b) (+ a b)))) (f 9 4)")
+(define code "(begin (define (f a b) (begin (print 5) (* (- a b) (+ a b)))) (f 9 4))")
 ;(define code "(begin (define (f a b) (* (- a b) (+ a b)) (f 9 4))")
 
-(build (AST code))
+(display (build (AST code)))
