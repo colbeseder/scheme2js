@@ -29,6 +29,8 @@
 		(open-input-string code)))
 
 (define (jsize lst)
+  ;(print lst)
+  
   (print lst)
   (case (car lst)
   ('define (func-def lst))
@@ -61,9 +63,17 @@
   (string-append 
     "function " 
     (S (car (car (cdr tree)))) "(" (string-join (map S (cdr (car (cdr tree ) ) ) ) ", ") ") { " 
-    "return " (jsize (xcar tree)) " ;"
+    (jsize (insert-return (xcar tree))) " ;"
     " }" )
 )
+
+; If function body 
+(define (insert-return tree)
+  (if (equal? (car tree) 'begin)
+    (reverse (cons (cons 'return (cons (xcar tree) '() )) (cdr (reverse tree))))
+    (cons 'return (cons tree '()))
+     )
+  )
 
 (define (func-call lst)
   (if (null? lst)
@@ -79,6 +89,7 @@
   )
 )
 
-(define code "(begin (define (f a b) (* (- a b) (+ a b))) (f 9 4))")
+(define code "(define (f a b) (begin (print 5) (* (- a b) (+ a b)))) (f 9 4)")
+;(define code "(begin (define (f a b) (* (- a b) (+ a b)) (f 9 4))")
 
 (build (AST code))
